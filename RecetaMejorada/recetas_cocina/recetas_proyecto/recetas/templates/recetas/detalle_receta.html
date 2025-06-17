@@ -1,0 +1,53 @@
+{% extends 'recetas/base.html' %} {# Asumo que tu base.html ya carga Bootstrap #}
+
+{% block title %}{{ receta.nombre }}{% endblock %}
+
+{% block content %}
+<div class="card p-4 shadow-sm" style="background: #fff7f0;">
+ {# Contenedor principal para centrar y dar espaciado #}
+    <div class="card p-4 shadow-sm"> {# Una tarjeta Bootstrap para agrupar el contenido de la receta #}
+        <h1 class="card-title text-center mb-4">{{ receta.nombre }}</h1>
+
+        {# Botón para editar receta - solo visible para el creador #}
+        {% comment "" %}
+        {% if user.is_authenticated and user == receta.creado_por %}
+            <div class="text-end mb-3"> {# Alinea el botón a la derecha #}
+                <a href="{% url 'editar_receta' receta.id %}" class="btn btn-warning btn-sm">Editar Receta</a>
+            </div>
+        {% endif %}
+        {% endcomment %}
+        
+
+        {% if receta.imagen %}
+            <div class="text-center mb-4"> {# Centra la imagen #}
+                <img src="{{ receta.imagen.url }}" class="img-fluid rounded" alt="{{ receta.nombre }}" style="max-height: 450px; object-fit: cover;"> {# img-fluid para responsividad, rounded para esquinas #}
+            </div>
+        {% else %}
+            <p class="text-center text-muted mb-4">No hay imagen disponible para esta receta.</p>
+        {% endif %}
+
+        <h3 class="mt-4 mb-2">Descripción:</h3>
+        <p class="card-text">{{ receta.descripcion }}</p>
+
+        <h3 class="mt-4 mb-2">Detalles:</h3>
+        <ul class="list-group list-group-flush mb-4"> {# Lista de grupo de Bootstrap para detalles #}
+            <li class="list-group-item"><strong>Categoría:</strong> {{ receta.categoria }}</li>
+            <li class="list-group-item"><strong>Creado por:</strong> {{ receta.creado_por.username }}</li>
+            <li class="list-group-item"><strong>Fecha de Creación:</strong> {{ receta.fecha_creacion|date:"d M Y, H:i" }}</li> {# Formato de fecha más legible #}
+        </ul>
+
+        <h3 class="mb-3">Ingredientes:</h3>
+        <ul class="list-group mb-4"> {# Lista de grupo para ingredientes #}
+            {% for item in ingredientes %}
+                <li class="list-group-item">{{ item.cantidad }} {{ item.ingrediente.unidad_medida }} de {{ item.ingrediente.nombre }}</li>
+            {% empty %}
+                <li class="list-group-item text-muted">No hay ingredientes registrados para esta receta.</li>
+            {% endfor %}
+        </ul>
+
+        <div class="mt-4 text-center"> {# Centra el botón de volver #}
+            <a href="{% url 'lista_recetas' %}" class="btn btn-info">Volver a la lista de recetas</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

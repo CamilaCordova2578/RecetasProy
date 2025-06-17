@@ -1,0 +1,101 @@
+{# recetas/perfil_usuario.html #}
+{% extends 'recetas/base.html' %} {# Asegúrate de extender tu plantilla base #}
+
+{% block content %}
+    <h1>Perfil de Usuario: {{ user.username }}</h1>
+
+    <section class="user-info">
+        <h2>Información Personal</h2>
+        <p><strong>Nombre de Usuario:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        {# Si tienes un modelo de Usuario extendido y quieres mostrar sus campos adicionales: #}
+        {% if user.usuario %} {# Asumiendo que tu User de Django tiene un OneToOneField a tu modelo Usuario #}
+            <p><strong>Nombre completo (según perfil):</strong> {{ user.usuario.nombre_usuario }}</p>
+            {# Otros campos de tu modelo Usuario si quieres mostrarlos #}
+        {% endif %}
+        {# Opcional: Enlace para editar la información del perfil si creas una vista para ello #}
+        {# <a href="{% url 'editar_perfil_info' %}" class="btn-sm">Editar Información Personal</a> #}
+    </section>
+
+    <section class="create-recipe-section">
+        <h2>Crear Nueva Receta</h2>
+        <form method="post" enctype="multipart/form-data"> {# Añade enctype para la imagen #}
+            {% csrf_token %}
+            {{ form_creacion.as_p }}
+            <button type="submit" name="crear_receta" class="btn">Guardar Receta</button>
+        </form>
+    </section>
+
+    <section class="my-recipes-list">
+        <h2>Mis Recetas Publicadas</h2>
+        {% if recetas_del_usuario %}
+            <div class="recipe-cards-container"> {# Contenedor para las cards #}
+                {% for receta in recetas_del_usuario %}
+                    <div class="recipe-card"> {# Card individual #}
+                        <a href="{% url 'detalle_receta' receta.id %}">
+                            {% if receta.imagen %}
+                                <img src="{{ receta.imagen.url }}" alt="{{ receta.nombre }}" class="recipe-card-image">
+                            {% else %}
+                                <img src="/static/img/default_recipe.png" alt="Imagen no disponible" class="recipe-card-image"> {# Usa una imagen por defecto #}
+                            {% endif %}
+                        </a>
+                        <div class="card-content">
+                            <h3><a href="{% url 'detalle_receta' receta.id %}">{{ receta.nombre }}</a></h3>
+                            <p class="recipe-description">{{ receta.descripcion|truncatewords:15 }}</p>
+                            <p class="recipe-category">Categoría: {{ receta.categoria }}</p>
+                            <p class="recipe-date">Creada: {{ receta.fecha_creacion|date:"d M Y" }}</p>
+                        </div>
+                        <div class="card-actions">
+                            <a href="{% url 'detalle_receta' receta.id %}" class="btn btn-view">Ver</a>
+                            <a href="{% url 'editar_receta' receta.id %}" class="btn btn-edit">Editar</a>
+                            <form action="{% url 'perfil_usuario' %}" method="post" style="display:inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="receta_id" value="{{ receta.id }}">
+                                <button type="submit" name="eliminar_receta" class="btn btn-delete" onclick="return confirm('¿Estás seguro de que quieres eliminar esta receta?');">Eliminar</button>
+                            </form>
+                        </div>
+                    </div> {# Fin de recipe-card #}
+                {% endfor %}
+            </div> {# Fin de recipe-cards-container #}
+        {% else %}
+            <p>Aún no has creado ninguna receta.</p>
+        {% endif %}
+    </section>
+
+    {# Opcional: Sección para "Mis Recetas Favoritas" - Si la vista 'perfil_usuario' la pasa #}
+     <section class="my-favorites">
+        <h2>Mis Recetas Favoritas</h2>
+        {% if recetas_favoritas %}
+            <div class="recipe-cards-container">
+                {% for receta in recetas_favoritas %}
+                    <div class="recipe-card">
+                        <a href="{% url 'detalle_receta' receta.id %}">
+                            {% if receta.imagen %}
+                                <img src="{{ receta.imagen.url }}" alt="{{ receta.nombre }}" class="recipe-card-image">
+                            {% else %}
+                                <img src="/static/img/default_recipe.png" alt="Imagen no disponible" class="recipe-card-image">
+                            {% endif %}
+                        </a>
+                        <div class="card-content">
+                            <h3><a href="{% url 'detalle_receta' receta.id %}">{{ receta.nombre }}</a></h3>
+                            <p class="recipe-description">{{ receta.descripcion|truncatewords:15 }}</p>
+                        </div>
+                        <div class="card-actions">
+                            <a href="{% url 'detalle_receta' receta.id %}" class="btn btn-view">Ver</a>
+                            {# Opcional: botón para quitar de favoritos #}
+                            <form class="favorite-toggle-form" action="{% url 'toggle_favorito' receta.id %}" method="post" data-receta-id="{{ receta.id }}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-favorite">Quitar Favorito</button>
+                            </form>
+
+                        </div>
+                        
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No tienes recetas marcadas como favoritas.</p>
+        {% endif %}
+    </section> 
+
+{% endblock %}

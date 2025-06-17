@@ -1,0 +1,95 @@
+{% extends 'recetas/base.html' %} {# O el path a tu template base principal #}
+{% load crispy_forms_tags %} {# Si usas crispy forms #}
+
+{% block title %}Crear Nueva Receta{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Crear Nueva Receta</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {# Formulario principal de la receta #}
+        <h3>Datos de la Receta</h3>
+        {{ form|crispy }} {# O {{ form.as_p }} #}
+
+        <hr class="my-4">
+
+        {# Formset para los Ingredientes #}
+        <h3>Ingredientes</h3>
+        <div id="formset-container">
+            {{ ingrediente_formset.management_form }} {# ESTO ES OBLIGATORIO para el formset #}
+
+            {% for form_ingrediente in ingrediente_formset %}
+                <div class="ingrediente-formset-row mb-3 p-3 border rounded">
+                    <p>Ingrediente {{ forloop.counter }}</p>
+                    {{ form_ingrediente|crispy }} {# O {{ form_ingrediente.as_p }} #}
+
+                    {% if form_ingrediente.instance.pk %}
+                        <input type="checkbox" name="{{ form_ingrediente.prefix }}-DELETE" id="{{ form_ingrediente.prefix }}-DELETE" class="form-check-input">
+                        <label for="{{ form_ingrediente.prefix }}-DELETE" class="form-check-label">Eliminar este ingrediente</label>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+        {# Botón para añadir más ingredientes dinámicamente (requiere JS) #}
+        <div class="d-flex justify-content-start align-items-center mt-4 mb-4"> {# Añadido un div flexbox para los botones #}
+            <button class="btn btn-success">Agregar ingrediente</button>
+            <button type="submit" class="btn btn-primary">Guardar Receta</button>
+        </div>
+    </form>
+</div>
+
+{# --- SCRIPTS PARA MANEJAR EL FORMSET DINÁMICAMENTE --- #}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const addIngredienteButton = document.getElementById('add-ingrediente-button');
+        const formsetContainer = document.getElementById('formset-container');
+        const totalForms = document.querySelector('#id_ingredientes-TOTAL_FORMS'); // El ID del campo TOTAL_FORMS
+        const emptyForm = document.querySelector('.ingrediente-formset-row').cloneNode(true); // Clonar la primera fila para usarla como template
+
+        // Limpiar los valores y errores del formulario clonado
+        emptyForm.querySelectorAll('input, select, textarea').forEach(input => {
+            input.value = '';
+            input.checked = false; // Para checkboxes
+        });
+        emptyForm.querySelectorAll('.invalid-feedback, .errorlist').forEach(errorDiv => errorDiv.remove());
+
+        // Función para actualizar los IDs y nombres de los campos en el nuevo formulario
+        function updateElementIndex(element, prefix, index) {
+            const idRegex = new RegExp(`(${prefix}-(\\d+)-)|(${prefix}__prefix__)`, 'g');
+            const nameRegex = new RegExp(`(${prefix}-(\\d+)-)|(${prefix}-__prefix__)`, 'g');
+
+            if (element.id) {
+                element.id = element.id.replace(idRegex, `${prefix}-${index}-`);
+            }
+            if (element.name) {
+                element.name = element.name.replace(nameRegex, `${prefix}-${index}-`);
+            }
+            if (element.htmlFor) { // Para etiquetas <label>
+                element.htmlFor = element.htmlFor.replace(idRegex, `${prefix}-${index}-`);
+            }
+        }
+
+        addIngredienteButton.addEventListener('click', function() {
+            const currentTotalForms = parseInt(totalForms.value);
+            const newForm = emptyForm.cloneNode(true);
+
+            newForm.innerHTML = newForm.innerHTML.replace(/__prefix__/g, currentTotalForms); // Reemplaza __prefix__ por el índice actual
+            newForm.querySelectorAll('input, select, textarea, label').forEach(element => {
+                updateElementIndex(element, 'ingredientes', currentTotalForms); // 'ingredientes' es el prefijo del formset
+            });
+            newForm.querySelector('p').textContent = `Ingrediente ${currentTotalForms + 1}`; // Actualiza el número de ingrediente
+
+            formsetContainer.appendChild(newForm);
+            totalForms.value = currentTotalForms + 1; // Incrementa el total de formularios
+        });
+
+        // Opcional: Funcionalidad para eliminar filas si can_delete=True
+        // Esto sería más complejo para hacerlo dinámicamente con JS, pero la casilla DELETE ya funciona.
+        // Si quieres un botón de "Eliminar" en cada fila, necesitarías más JS.
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Recetas de Cocina{% endblock %}</title>
+    {% block extra_head %}{% endblock %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+
+
+    body {
+    background: #fff9f3;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.navbar {
+    background: linear-gradient(to right,rgb(2, 2, 2));
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #5c2c90 !important;
+}
+
+h1, h2, h3, h4 {
+    color: #a0526d;
+}
+
+.btn-primary {
+    background-color: #ff6f61;
+    border-color: #ff6f61;
+}
+
+.btn-primary:hover {
+    background-color: #e85c50;
+}
+
+.btn-info {
+    background-color: #6ec1e4;
+    border-color: #6ec1e4;
+}
+
+.btn-info:hover {
+    background-color: #56aed3;
+}
+
+.recipe-card {
+    background-color: #fffaf0;
+    border-left: 6px solidrgb(182, 71, 74);
+    transition: transform 0.2s ease;
+}
+
+.recipe-card:hover {
+    transform: scale(1.01);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.08);
+}
+
+.card-title {
+    color: #ff6f61;
+    font-weight: bold;
+}
+
+
+
+
+
+
+
+    body {
+        padding-top: 70px;
+        background-color: #f5f6fa;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .messages {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+    }
+
+    .messages li {
+        padding: 12px 18px;
+        margin: 10px 0;
+        border-radius: 6px;
+        font-weight: 500;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .messages li.success { background-color: #d4edda; border-left: 5px solid #28a745; color: #155724; }
+    .messages li.info    { background-color: #d1ecf1; border-left: 5px solid #17a2b8; color: #0c5460; }
+    .messages li.warning { background-color: #fff3cd; border-left: 5px solid #ffc107; color: #856404; }
+    .messages li.error   { background-color: #f8d7da; border-left: 5px solid #dc3545; color: #721c24; }
+
+    .btn {
+        padding: 10px 18px;
+        background: #007bff;
+        color: white;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+        background: #0056b3;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+    }
+
+    .btn-danger:hover {
+        background: #c82333;
+    }
+
+    .heart {
+        color: red;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .heart.empty {
+        color: #ccc;
+    }
+
+    .recipe-card {
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        background-color: #fff;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .recipe-card img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin-bottom: 15px;
+        border-radius: 8px;
+    }
+
+    .navbar-profile-img {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+        vertical-align: middle;
+        margin-right: 6px;
+        border: 2px solid #ffc107;
+    }
+
+    .form-container {
+        max-width: 520px;
+        margin: 30px auto;
+        padding: 30px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        background-color: #ffffff;
+    }
+
+    .profile-card {
+        max-width: 850px;
+        margin: 30px auto;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+    }
+
+    .profile-img {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #007bff;
+        margin-bottom: 20px;
+    }
+
+    #suggestion-box ul {
+        list-style: none;
+        margin: 0;
+        padding: 10px 0;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    #suggestion-box li {
+        padding: 10px 16px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        font-size: 14px;
+    }
+
+    #suggestion-box li:hover {
+        background-color: #ced4da;
+    }
+
+    #suggestion-box em {
+        display: block;
+        padding: 6px 16px;
+        font-style: italic;
+        font-size: 13px;
+        color: #6c757d;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    /* Navbar personalizado */
+    .navbar {
+        background-color: #212529 !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    .navbar-brand {
+        font-weight: bold;
+        color: #ffffff !important;
+        font-size: 1.25rem;
+        transition: color 0.3s ease;
+    }
+
+    .navbar-brand:hover {
+        color: #ffc107 !important;
+    }
+
+    .navbar-nav .nav-link {
+        color: #ffffff !important;
+        font-weight: 500;
+        padding: 8px 14px;
+        margin-right: 8px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .navbar-nav .nav-link:hover,
+    .navbar-nav .nav-link.active {
+        background-color: #343a40;
+        color: #ffc107 !important;
+    }
+
+    .navbar-toggler {
+        border-color: #ffc107;
+    }
+
+    .navbar-toggler-icon {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffc107' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255,193,7,1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    }
+
+    /* Dropdown personalizado */
+    .dropdown-menu {
+        background-color: #343a40;
+        border: none;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .dropdown-menu .dropdown-item {
+        color: #f8f9fa;
+        transition: background-color 0.2s ease;
+    }
+
+    .dropdown-menu .dropdown-item:hover {
+        background-color: #495057;
+        color: #ffc107;
+    }
+
+    .dropdown-divider {
+        border-color: #6c757d;
+    }
+</style>
+
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'inicio' %}">Mi Proyecto de Recetas</a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lista_recetas' %}">Recetas</a>
+                    </li>
+                    {% endif %}
+                    {% comment "" %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'lista_ingredientes' %}">Ingredientes</a>
+                    </li>
+                    {% endcomment %}
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'usuario:lista_usuarios' %}">Usuarios</a> {# Cambiado de usuarios: a usuario: #}
+                    </li>
+                    {% endif %}
+                    
+
+
+
+                    <form id="search-form" action="{% url 'buscador_global' %}" method="get" style="position: relative; display: inline-block;">
+                        <div style="position: relative; display: flex; align-items: center; background:rgb(170, 196, 206); border-radius: 50px; padding: 5px 15px; width: 280px;">
+                            <svg style="width: 18px; height: 18px; margin-right: 8px;" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="7" stroke="#8e44ad" stroke-width="2"/>
+                                <line x1="16" y1="16" x2="21" y2="21" stroke="#8e44ad" stroke-width="2"/>
+                            </svg>
+                            <input
+                                type="text"
+                                id="search-input"
+                                name="q"
+                                placeholder="Busca recetas, ingredientes, etc..."
+                                autocomplete="off"
+                                style="border: none; outline: none; background: transparent; font-size: 14px; width: 100%;"
+                            />
+                        </div>
+                        <div id="suggestion-box" style="
+                            position: absolute;
+                            top: 100%;
+                            left: 0;
+                            right: 0;
+                            background: Cornsilk;
+                            border: 1px solid #ccc;
+                            border-radius: 0 0 10px 10px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            z-index: 1000;
+                            max-height: 250px;
+                            overflow-y: auto;
+                        "></div>
+                        </form>
+
+
+
+                </ul>
+                
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {% if user.perfil.foto_perfil %}
+                                    <img src="{{ user.perfil.foto_perfil.url }}" alt="Foto" class="navbar-profile-img">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/30?text=👤" alt="Sin Foto" class="navbar-profile-img">
+                                {% endif %}
+                                Hola, {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="{% url 'usuario:perfil_usuario' %}">Mi Perfil</a></li> {# Cambiado de usuarios: a usuario: #}
+                                {%comment%}
+                                <li><a class="dropdown-item" href="{% url 'usuario:editar_perfil' %}">Editar Perfil</a></li> {# Cambiado de usuarios: a usuario: #}
+                                
+                                <li><a class="dropdown-item" href="{% url 'usuario:cambiar_contrasena' %}">Cambiar Contraseña</a></li> {# Cambiado de usuarios: a usuario: #}
+                                {%endcomment%}
+                                <li><a class="dropdown-item" href="{% url 'mis_favoritos' %}">Mis Favoritos</a></li>
+                                {%comment%}
+                                <li><a class="dropdown-item" href="{% url 'usuario:configuracion' %}">Configuración de Cuenta</a></li> {# Cambiado de usuarios: a usuario: #}
+                                {% endcomment %}
+                                 <li><a class="dropdown-item" href="{% url 'crear_receta' %}">Crear Receta</a></li> {# Cambiado de usuarios: a usuario: #}
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form action="{% url 'usuario:logout' %}" method="post" class="dropdown-item"> {# Cambiado de usuarios: a usuario: #}
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-link nav-link text-danger w-100 text-start p-0">Cerrar Sesión</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'usuario:login' %}">Iniciar Sesión</a> {# Cambiado de usuarios: a usuario: #}
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'usuario:registro' %}">Registrarse</a> {# Cambiado de usuarios: a usuario: #}
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% if messages %}
+        <ul class="messages list-unstyled">
+            {% for message in messages %}
+                <li{% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"  crossorigin="anonymous"></script>
+    {% block extra_js %}
+        <script>
+
+
+            document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('search-input');
+            const box = document.getElementById('suggestion-box');
+
+            input.addEventListener('input', function () {
+                const q = this.value.trim();
+                if (q.length < 1) {
+                    box.innerHTML = '';
+                    return;
+                }
+
+                fetch(`/ajax/sugerencias/?q=${encodeURIComponent(q)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        box.innerHTML = '';
+                        if (data.sugerencias.length > 0) {
+                            const ul = document.createElement('ul');
+                            const header = document.createElement('li');
+                            header.innerHTML = '<em>Sugerencias</em>';
+                            ul.appendChild(header);
+
+                            data.sugerencias.forEach(item => {
+                                const li = document.createElement('li');
+                                li.textContent = item.nombre;
+                                li.onclick = () => {
+                                    window.location.href = `/recetas/${item.id}/`;
+                                };
+                                ul.appendChild(li);
+                            });
+
+                            box.appendChild(ul);
+                        }
+                    });
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!box.contains(e.target) && e.target !== input) {
+                    box.innerHTML = '';
+                }
+            });
+        });
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelectorAll('.favorite-toggle-form').forEach(form => {
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault();
+
+                        const button = this.querySelector('button');
+                        const recetaId = this.dataset.recetaId;
+                        const csrfToken = this.querySelector('[name="csrfmiddlewaretoken"]').value;
+
+                        console.log(`[Favoritos] Intentando alternar favorito para receta ID: ${recetaId}`);
+
+                        fetch(this.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrfToken,
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify({})
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().catch(() => {
+                                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                                }).then(errorData => {
+                                    throw new Error(errorData.message || 'Error desconocido del servidor.');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.es_favorito !== undefined) {
+                                if (button.classList.contains('heart-button')) {
+                                    button.innerHTML = data.es_favorito ? '❤️ Favorito' : '🤍 Añadir a Favoritos';
+                                    console.log(`[Favoritos] Receta ${recetaId} ahora es ${data.es_favorito ? 'favorita' : 'no favorita'}.`);
+                                }
+                                else if (button.classList.contains('btn-favorite')) {
+                                    if (!data.es_favorito) {
+                                        const card = this.closest('.recipe-card');
+                                        if (card) {
+                                            card.remove();
+                                            console.log(`[Favoritos] Receta ${recetaId} quitada de favoritos en el perfil.`);
+                                        }
+                                    } else {
+                                        console.log(`[Favoritos] Receta ${recetaId} inesperadamente sigue siendo favorita.`);
+                                    }
+                                }
+                            } else {
+                                console.error('[Favoritos] La respuesta JSON no contiene la propiedad "es_favorito".', data);
+                                alert('Hubo un error al procesar tu solicitud de favorito (respuesta inesperada).');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('[Favoritos] Error en la solicitud AJAX:', error);
+                            alert(`Hubo un error al procesar tu solicitud de favorito: ${error.message || error}. Consulta la consola para más detalles.`);
+                        });
+                    });
+                });
+
+                document.querySelectorAll('.delete-recipe-form').forEach(form => {
+                    form.addEventListener('submit', function(event) {
+                        event.preventDefault();
+
+                        const recetaId = this.dataset.recetaId;
+                        const csrfToken = this.querySelector('[name="csrfmiddlewaretoken"]').value;
+                        const cardToRemove = this.closest('.recipe-card');
+
+                        if (!confirm('¿Estás seguro de que quieres eliminar esta receta permanentemente? Esta acción no se puede deshacer.')) {
+                            return;
+                        }
+
+                        console.log(`[Eliminar] Intentando eliminar receta ID: ${recetaId}`);
+
+                        fetch(this.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrfToken,
+                                'Content-Type': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest',
+                            },
+                            body: JSON.stringify({})
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.json().catch(() => {
+                                    throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
+                                }).then(errorData => {
+                                    throw new Error(errorData.message || 'Error desconocido del servidor.');
+                                });
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                if (cardToRemove) {
+                                    cardToRemove.remove();
+                                    console.log(`[Eliminar] ${data.message}`);
+                                    alert(data.message);
+                                }
+                            } else {
+                                console.error('[Eliminar] Error al eliminar:', data.message);
+                                alert(data.message);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('[Eliminar] Error en la solicitud AJAX:', error);
+                            alert(`Hubo un error al eliminar la receta: ${error.message || error}. Consulta la consola para más detalles.`);
+                        });
+                    });
+                });
+            });
+        </script>
+    {% endblock %}
+   
+
+</body>
+</html>

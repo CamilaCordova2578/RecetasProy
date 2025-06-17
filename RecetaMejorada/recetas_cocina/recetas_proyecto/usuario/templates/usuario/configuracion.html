@@ -1,0 +1,52 @@
+{% extends 'recetas/base.html' %}
+{% load static %}
+
+{% block title %}Configuración de Cuenta{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-info text-white">
+                    <h3 class="mb-0">Configuración de Cuenta de {{ usuario.username }}</h3>
+                </div>
+                <div class="card-body">
+                    <p class="lead">Aquí puedes ajustar las configuraciones relacionadas con tu cuenta.</p>
+
+                    <div class="list-group">
+                        <a href="{% url 'usuario:editar_perfil' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-user-edit me-2"></i> Editar Perfil
+                        </a>
+                        <a href="{% url 'usuario:cambiar_contrasena' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-key me-2"></i> Cambiar Contraseña
+                        </a>
+                        <a href="{% url 'mis_favoritos' %}" class="list-group-item list-group-item-action">
+                            <i class="fas fa-heart me-2"></i> Mis Recetas Favoritas
+                        </a>
+                        {# Agrega más opciones de configuración aquí #}
+                        {# Por ejemplo, si tienes una vista para gestionar notificaciones #}
+                        
+                    </div>
+
+                    <div class="mt-4 border-top pt-3">
+                        <h4 class="text-danger mb-3">Zona Peligrosa</h4>
+                        <p class="text-muted">Desactivar tu cuenta es una acción permanente y eliminará tu perfil público.</p>
+                        <form method="post" action="{% url 'usuario:desactivar_cuenta' %}" onsubmit="return confirm('¿Estás seguro de que deseas desactivar tu cuenta? Esta acción no se puede deshacer. Escribe DESACTIVAR para confirmar.');">
+                            {% csrf_token %}
+                            <div class="input-group mb-3">
+                                <input type="text" name="confirmacion" class="form-control" placeholder="Escribe 'DESACTIVAR' para confirmar" aria-label="Confirmación de desactivación">
+                                <button type="submit" class="btn btn-danger">Desactivar Cuenta</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'usuario:perfil_usuario' %}" class="btn btn-outline-secondary">Volver a Mi Perfil</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

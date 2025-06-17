@@ -1,0 +1,94 @@
+{% extends 'recetas/base.html' %}
+{% load static %}
+
+{% block title %}Editar Perfil{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header text-center bg-warning text-dark">
+                    <h3 class="mb-0">Editar Mi Perfil</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data"> {# IMPORTANTE: enctype para subida de archivos #}
+                        {% csrf_token %}
+                        
+                        {# Foto de Perfil actual #}
+                        <div class="mb-3 text-center">
+                            {% if perfil.foto_perfil %}
+                                <img src="{{ perfil.foto_perfil.url }}" alt="Foto de Perfil Actual" class="profile-img mb-2">
+                                <p class="text-muted">Foto actual</p>
+                            {% else %}
+                                <img src="https://via.placeholder.com/150?text=Sin+Foto" alt="Sin Foto" class="profile-img mb-2">
+                                <p class="text-muted">No tienes foto de perfil.</p>
+                            {% endif %}
+                        </div>
+
+                        {% for field in form %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {# Renderizado especial para FileInput (foto_perfil) #}
+                                {% if field.name == 'foto_perfil' %}
+                                    <input type="file" name="{{ field.name }}" id="{{ field.id_for_label }}" class="form-control">
+                                    {% if field.value %}
+                                        <div class="mt-2">
+                                            <span class="text-muted">Archivo actual: </span><a href="{{ field.value.url }}" target="_blank">{{ field.value.name }}</a>
+                                            {% if field.name == 'foto_perfil' and field.value %}
+                                                <div class="form-check">
+                                                    <input type="checkbox" name="{{ field.name }}-clear" id="{{ field.id_for_label }}-clear_id" class="form-check-input">
+                                                    <label for="{{ field.id_for_label }}-clear_id" class="form-check-label">Eliminar foto actual</label>
+                                                </div>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-warning w-100 mt-3">Guardar Cambios</button>
+                    </form>
+                    <p class="text-center mt-3">
+                        <a href="{% url 'usuario:perfil_usuario' %}">Volver a Mi Perfil</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input, select, textarea').forEach(function(element) {
+            if (!element.classList.contains('form-control') && element.type !== 'file' && element.type !== 'checkbox' && element.tagName !== 'SELECT' && element.tagName !== 'TEXTAREA') {
+                element.classList.add('form-control');
+            }
+        });
+        document.querySelectorAll('select, textarea').forEach(function(element) {
+            if (!element.classList.contains('form-control')) {
+                element.classList.add('form-control');
+            }
+        });
+    });
+</script>
+{% endblock %}

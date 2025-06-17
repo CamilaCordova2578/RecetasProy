@@ -1,0 +1,113 @@
+{% extends 'recetas/base.html' %}
+{% load static %}
+
+{% block title %}Iniciar Sesión{% endblock %}
+
+{% block content %}
+<style>
+    .login-card {
+        background: linear-gradient(to bottom right, #fffaf0, #ffe0e0);
+        border-left: 6px solid #ff9a9e;
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        animation: fadeIn 0.6s ease-in-out;
+    }
+
+    .login-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0;
+    }
+
+    .btn-success {
+        background-color: #ff6f61;
+        border-color: #ff6f61;
+        border-radius: 50px;
+    }
+
+    .btn-success:hover {
+        background-color: #e85c50;
+        border-color: #e85c50;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .form-text.text-muted {
+        font-size: 0.85rem;
+    }
+
+    .alert-danger {
+        border-radius: 6px;
+        padding: 6px 12px;
+    }
+
+    .register-link a {
+        color: #007bff;
+        font-weight: 500;
+    }
+
+    .register-link a:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card login-card shadow-sm">
+                <div class="card-header text-center bg-success" style="background: #6ec1e4;">
+                    <h3 class="login-title">Iniciar Sesión</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% for field in form %}
+                            <div class="mb-3">
+                                {{ field.label_tag }}
+                                {{ field }}
+                                {% if field.help_text %}
+                                    <small class="form-text text-muted">{{ field.help_text }}</small>
+                                {% endif %}
+                                {% for error in field.errors %}
+                                    <div class="alert alert-danger mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <button type="submit" class="btn btn-success w-100 mt-3">Ingresar</button>
+                    </form>
+                    <p class="text-center mt-3 register-link">
+                        ¿No tienes una cuenta? <a href="{% url 'usuario:registro' %}">Regístrate aquí</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input, select, textarea').forEach(function(element) {
+            if (!element.classList.contains('form-control')) {
+                element.classList.add('form-control');
+            }
+        });
+    });
+</script>
+{% endblock %}

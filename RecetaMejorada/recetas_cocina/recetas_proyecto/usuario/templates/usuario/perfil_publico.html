@@ -1,0 +1,87 @@
+{% extends 'recetas/base.html' %}
+{% load static %}
+
+{% block title %}Perfil de {{ perfil.usuario.username }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="profile-card text-center">
+        <h2 class="mb-4">Perfil de {{ perfil.usuario.username }}</h2>
+
+        <div class="mb-4">
+            {% if perfil.foto_perfil %}
+                <img src="{{ perfil.foto_perfil.url }}" alt="Foto de Perfil" class="profile-img">
+            {% else %}
+                {# Asegúrate de que esta ruta a 'sin_foto.png' es correcta o usa el placeholder de Via.placeholder #}
+                <img src="{% static 'img/sin_foto.png' %}" alt="Sin Foto" class="profile-img">
+                {# O la opción de Via.placeholder: #}
+                {# <img src="https://via.placeholder.com/150?text=Sin+Foto" alt="Sin Foto" class="profile-img"> #}
+            {% endif %}
+        </div>
+
+        <p class="lead"><strong>Nombre de usuario:</strong> {{ perfil.usuario.username }}</p>
+
+        {% if perfil.descripcion %}
+            <p><strong>Acerca de mí:</strong> {{ perfil.descripcion }}</p>
+        {% else %}
+            <p class="text-muted">Este usuario no ha añadido una descripción.</p>
+        {% endif %}
+
+        {% if perfil.fecha_nacimiento %}
+            <p><strong>Fecha de Nacimiento:</strong> {{ perfil.fecha_nacimiento|date:"d M, Y" }}</p>
+        {% endif %}
+
+        <div class="mt-4">
+            {# Solo muestra los botones de edición si el usuario que ve es el dueño del perfil #}
+            {% if es_perfil_propio %}
+                <a href="{% url 'usuario:editar_perfil' %}" class="btn btn-primary me-2">Editar Mi Perfil</a>
+                <a href="{% url 'usuario:cambiar_contrasena' %}" class="btn btn-secondary">Cambiar Contraseña</a>
+                <a href="{% url 'mis_favoritos' %}" class="btn btn-info mt-2">Mis Recetas Favoritas</a>
+                {# Si tienes una URL para "mis_recetas" propias #}
+                {# <a href="{% url 'recetas:mis_recetas' %}" class="btn btn-info mt-2">Mis Recetas</a> #}
+            {% else %}
+                {# Aquí puedes añadir opciones para interactuar con otros usuarios, como un botón de "seguir" #}
+                {# <button class="btn btn-success">Seguir</button> #}
+            {% endif %}
+        </div>
+
+        {# Sección para mostrar las recetas publicadas por este usuario #}
+        <div class="mt-5 border-top pt-4">
+            <h4>Recetas de {{ perfil.usuario.username }}</h4>
+            {% if recetas_usuario %} {# Esta variable debe ser pasada desde la vista `perfil_publico` #}
+                <div class="row">
+                    {% for receta in recetas_usuario %}
+                        <div class="col-md-4 mb-4">
+                            <div class="card recipe-card h-100 shadow-sm">
+                                {% if receta.imagen %}
+                                    <img src="{{ receta.imagen.url }}" class="card-img-top" alt="{{ receta.nombre }}">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/400x250?text=Sin+Imagen" class="card-img-top" alt="Sin Imagen">
+                                {% endif %}
+                                <div class="card-body">
+                                    <h5 class="card-title"><a href="{% url 'detalle_receta' receta.id %}">{{ receta.nombre }}</a></h5>
+                                    <p class="card-text">{{ receta.descripcion|truncatewords:20 }}</p>
+                                    <p class="card-text"><small class="text-muted">Categoría: {{ receta.categoria }}</small></p>
+
+                                    <h6 class="card-subtitle mb-2 text-muted">Ingredientes:</h6>
+                                    <ul class="list-unstyled small">
+                                        {# Itera sobre los objetos RecetaIngrediente relacionados con esta receta #}
+                                        {% for ri in receta.recetaingrediente_set.all %}
+                                            <li>{{ ri.cantidad }} {{ ri.ingrediente.unidad_medida }} de {{ ri.ingrediente.nombre }}</li>
+                                        {% empty %}
+                                            <li>No hay ingredientes registrados para esta receta.</li>
+                                        {% endfor %}
+                                    </ul>
+                                    <a href="{% url 'detalle_receta' receta.id %}" class="btn btn-sm btn-primary mt-2">Ver Detalles</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-muted">Este usuario aún no ha publicado ninguna receta.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

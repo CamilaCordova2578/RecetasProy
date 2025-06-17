@@ -1,0 +1,370 @@
+<!-- templates/recetas/editar_receta.html -->
+{% extends 'recetas/base.html' %}
+{% load static %}
+
+{% block title %}Editar Receta - {{ receta.nombre }}{% endblock %}
+
+{% block extra_css %}
+    <style>
+         .recipe-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+    }
+    .form-section {
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+    .section-title {
+        color: #667eea;
+        border-bottom: 2px solid #667eea;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+    .ingredient-row {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid #667eea;
+    }
+    .btn-add-ingredient {
+        background: #28a745;
+        border: none;
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    .btn-add-ingredient:hover {
+        background: #218838;
+        transform: translateY(-2px);
+    }
+    .btn-remove {
+        background: #dc3545;
+        border: none;
+        border-radius: 50%;
+        color: white;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .image-preview {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .current-image {
+        text-align: center;
+    }
+    @media (min-width: 768px) {
+        .image-preview {
+            max-width: 300px;
+        }
+    }
+    .empty-form {
+        display: none;
+    }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="recipe-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1><i class="fas fa-edit"></i> Editar Receta: {{ receta.nombre }}</h1>
+                <p class="mb-0">Modifica los datos de tu receta y sus ingredientes</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <button type="button" class="btn btn-outline-light" onclick="history.back()">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="receta-form">
+        {% csrf_token %}
+        
+        <!-- Datos de la Receta -->
+        <div class="form-section">
+            <h3 class="section-title">
+                <i class="fas fa-clipboard-list"></i> Datos de la Receta
+            </h3>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                            <strong>Nombre*</strong>
+                        </label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <div class="text-danger small">{{ form.nombre.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.categoria.id_for_label }}" class="form-label">
+                            <strong>Categoría*</strong>
+                        </label>
+                        {{ form.categoria }}
+                        {% if form.categoria.errors %}
+                            <div class="text-danger small">{{ form.categoria.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.descripcion.id_for_label }}" class="form-label">
+                    <strong>Descripción*</strong>
+                </label>
+                {{ form.descripcion }}
+                {% if form.descripcion.errors %}
+                    <div class="text-danger small">{{ form.descripcion.errors }}</div>
+                {% endif %}
+            </div>
+            
+            <div class="row">
+    <div class="col-md-6">
+        <div class="mb-3">
+            <label for="{{ form.imagen.id_for_label }}" class="form-label">
+                <strong>Imagen</strong>
+            </label>
+            {{ form.imagen }}
+            {% if form.imagen.errors %}
+                <div class="text-danger small">{{ form.imagen.errors }}</div>
+            {% endif %}
+            <div class="form-text">Formatos permitidos: JPG, PNG, GIF. Máximo 5MB</div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        {% if receta.imagen %}
+            <div class="current-image">
+                <p class="mb-2"><strong>Imagen actual:</strong></p>
+                <img src="{{ receta.imagen.url }}" alt="Imagen actual" class="image-preview img-fluid">
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+        </div>
+
+        <!-- Ingredientes -->
+        <div class="form-section">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="section-title mb-0">
+                    <i class="fas fa-list-ul"></i> Ingredientes
+                </h3>
+                <button type="button" class="btn btn-add-ingredient" id="add-ingredient">
+                    <i class="fas fa-plus"></i> Añadir Ingrediente
+                </button>
+            </div>
+
+            <div id="ingredientes-container">
+                {{ formset.management_form }}
+                
+                {% for form in formset %}
+                    <div class="ingredient-row formset-row" data-form-index="{{ forloop.counter0 }}">
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {{ form.non_field_errors }}
+                            </div>
+                        {% endif %}
+                        
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                <label class="form-label"><strong>Ingrediente</strong></label>
+                                {{ form.ingrediente }}
+                                {% if form.ingrediente.errors %}
+                                    <div class="text-danger small">{{ form.ingrediente.errors }}</div>
+                                {% endif %}
+                            </div>
+        
+                            <div class="col-md-3">
+                                <label class="form-label"><strong>Cantidad</strong></label>
+                                {{ form.cantidad }}
+                                {% if form.cantidad.errors %}
+                                    <div class="text-danger small">{{ form.cantidad.errors }}</div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-2 text-center">
+                                {% if form.instance.pk %}
+                                    {{ form.DELETE }}
+                                    <label for="{{ form.DELETE.id_for_label }}" class="btn btn-remove" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </label>
+                                {% else %}
+                                    <button type="button" class="btn btn-remove remove-ingredient" title="Eliminar">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Campos ocultos -->
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            
+            <div id="empty-form-template" class="empty-form">
+            
+
+             <div class="ingredient-row formset-row" data-form-index="_prefix_">
+        <div class="row align-items-center">
+            <div class="col-md-5">
+                <label class="form-label"><strong>Ingrediente</strong></label>
+                <select name="recetaingrediente_set-_prefix_-ingrediente" class="form-control ingrediente-select">
+                    <option value="">Seleccionar ingrediente</option>
+                    {% for ingrediente in ingredientes %}
+                        <option value="{{ ingrediente.id }}" data-unidad="{{ ingrediente.unidad_medida }}">{{ ingrediente.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label"><strong>Cantidad</strong></label>
+                <input type="number" name="recetaingrediente_set-_prefix_-cantidad" 
+                       class="form-control" step="0.01" min="0">
+            </div>
+            
+            
+            <div class="col-md-2 text-center">
+                <button type="button" class="btn btn-remove remove-ingredient" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <input type="hidden" name="recetaingrediente_set-_prefix_-id">
+    </div>
+</div>   
+          
+            <div class="alert alert-info mt-3">
+                <i class="fas fa-info-circle"></i> 
+                <strong>Consejo:</strong> Añade solo un ingrediente indica que debes agregar al menos uno para guardar la receta.
+            </div>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="text-center mb-4">
+            <button type="submit" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-save"></i> Actualizar Receta
+            </button>
+            <a href="{% url 'detalle_receta' receta.id %}" class="btn btn-secondary btn-lg">
+                <i class="fas fa-times"></i> Cancelar
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Template para nuevos ingredientes (oculto) -->
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let formCount = {{ formset.total_form_count }};
+    const maxForms = {{ formset.max_num|default:1000 }};
+    const container = document.getElementById('ingredientes-container');
+    const addButton = document.getElementById('add-ingredient');
+    const totalFormsInput = document.querySelector('[name$="TOTAL_FORMS"]');
+
+    // Función para actualizar unidad de medida
+    function updateUnidad(selectElement) {
+        const unidadInput = selectElement.closest('.ingredient-row').querySelector('.unidad-display');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const unidad = selectedOption.getAttribute('data-unidad') || '';
+        unidadInput.value = unidad;
+    }
+
+    // Agregar ingrediente
+    addButton.addEventListener('click', function() {
+        if (formCount < maxForms) {
+            const template = document.getElementById('empty-form-template');
+            const newForm = template.innerHTML.replace(/_prefix_/g, formCount);
+            
+            const div = document.createElement('div');
+            div.innerHTML = newForm;
+            container.appendChild(div.firstElementChild);
+            
+            formCount++;
+            totalFormsInput.value = formCount;
+            
+            // Agregar event listener al nuevo select
+            const newSelect = container.lastElementChild.querySelector('.ingrediente-select');
+            newSelect.addEventListener('change', function() {
+                updateUnidad(this);
+            });
+        }
+    });
+
+    // Eliminar ingrediente
+    container.addEventListener('click', function(e) {
+        if (e.target.closest('.remove-ingredient')) {
+            e.preventDefault();
+            const row = e.target.closest('.ingredient-row');
+            row.remove();
+            
+            // Reordenar índices
+            const rows = container.querySelectorAll('.formset-row');
+            rows.forEach((row, index) => {
+                const inputs = row.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                    if (input.name) {
+                        input.name = input.name.replace(/recetaingrediente_set-\d+/, `recetaingrediente_set-${index}`);
+                    }
+                    if (input.id) {
+                        input.id = input.id.replace(/id_recetaingrediente_set-\d+/, `id_recetaingrediente_set-${index}`);
+                    }
+                });
+                row.setAttribute('data-form-index', index);
+            });
+            
+            formCount = rows.length;
+            totalFormsInput.value = formCount;
+        }
+    });
+
+    // Event listeners para selects existentes
+    document.querySelectorAll('.ingrediente-select').forEach(select => {
+        select.addEventListener('change', function() {
+            updateUnidad(this);
+        });
+        
+        // Inicializar unidades existentes
+        updateUnidad(select);
+    });
+});
+</script>
+{% endblock %}

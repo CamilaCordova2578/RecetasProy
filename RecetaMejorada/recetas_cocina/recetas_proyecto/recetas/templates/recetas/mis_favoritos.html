@@ -1,0 +1,49 @@
+{# recetas/mis_favoritos.html #}
+{% extends 'recetas/base.html' %}
+{% load static %} {# Si usas alguna imagen estática #}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="text-center mb-4">
+        <h1>{{ title }}</h1>
+    </div>
+
+
+    {% if favoritos %}
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {% for favorito in favoritos %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        {% if favorito.receta.imagen %}
+                            <img src="{{ favorito.receta.imagen.url }}" class="card-img-top" alt="{{ favorito.receta.nombre }}" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            {# Imagen por defecto si no hay #}
+                            <img src="{% static 'images/default_recipe.png' %}" class="card-img-top" alt="Imagen por defecto" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        <div class="card-body">
+                            <h5 class="card-title">{{ favorito.receta.nombre }}</h5>
+                            <p class="card-text text-muted">{{ favorito.receta.descripcion|truncatechars:100 }}</p>
+                            <p class="card-text"><small class="text-muted">Categoría: {{ favorito.receta.categoria }}</small></p>
+                            <p class="card-text"><small class="text-muted">Añadido el: {{ favorito.fecha|date:"d M Y" }}</small></p> {# Mostrar la fecha en que se añadió a favoritos #}
+                        </div>
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <a href="{% url 'detalle_receta' receta_id=favorito.receta.id %}" class="btn btn-primary btn-sm">Ver Receta</a>
+                            
+                            <form action="{% url 'quitar_favorito' receta_id=favorito.receta.id %}" method="post" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">Quitar favorito</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center" role="alert">
+            No tienes recetas marcadas como favoritas todavía.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

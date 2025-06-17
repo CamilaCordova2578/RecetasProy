@@ -1,0 +1,127 @@
+{% extends 'recetas/base.html' %}
+{% load static %}
+
+{% block title %}Lista de Usuarios{% endblock %}
+
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+<style>
+    .titulo-usuarios {
+        font-family: 'Poppins', sans-serif;
+        font-size: 2.4rem;
+        font-weight: 700;
+        text-align: center;
+        color: #e85c50;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .titulo-usuarios::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 4px;
+        margin: 10px auto 0;
+        background: linear-gradient(to right, #ff9a9e, #fad0c4);
+        border-radius: 4px;
+    }
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background: linear-gradient(to bottom right,rgb(255, 255, 255),rgb(253, 241, 241));
+        border-left: 6px solidrgb(231, 22, 29);
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* 💡 sombra inicial */
+    }
+
+    .card-hover:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); /* 💡 sombra más intensa al hacer hover */
+    }
+
+    .profile-pic {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #6ec1e4;
+        transition: transform 0.2s ease;
+    }
+
+    .profile-pic:hover {
+        transform: rotate(3deg) scale(1.05);
+    }
+
+    .btn-outline-primary {
+        border-radius: 50px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .card-title {
+        font-weight: 600;
+        color: #e85c50;
+    }
+
+    .card-text {
+        font-size: 14px;
+        color: #555;
+    }
+</style>
+
+<div class="container mt-5">
+    <h2 class="titulo-usuarios">👨‍🍳 Nuestros Chefs y Usuarios 🍰</h2>
+
+
+    {% if page_obj %}
+        <div class="row">
+            {% for user_obj in page_obj %}
+                <div class="col-md-6 col-lg-4 mb-4 d-flex align-items-stretch">
+                    <div class="card card-hover shadow-sm text-center p-4 w-100">
+                        <div class="mb-3">
+                            {% if user_obj.perfil.foto_perfil %}
+                                <img src="{{ user_obj.perfil.foto_perfil.url }}" alt="Foto de {{ user_obj.username }}" class="profile-pic">
+                            {% else %}
+                                <img src="https://via.placeholder.com/100?text=👤" alt="Sin Foto" class="profile-pic" style="border: 3px dashed #ccc;">
+                            {% endif %}
+                        </div>
+                        <h5 class="card-title">{{ user_obj.username }}</h5>
+                        {% if user_obj.perfil.descripcion %}
+                            <p class="card-text">{{ user_obj.perfil.descripcion|truncatewords:12 }}</p>
+                        {% else %}
+                            <p class="text-muted small">Sin descripción.</p>
+                        {% endif %}
+                        <a href="{% url 'usuario:perfil_publico' username=user_obj.username %}" class="btn btn-outline-primary btn-sm mt-3">Ver Perfil</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Paginación -->
+        <nav aria-label="Paginación de usuarios" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+                    </li>
+                {% endif %}
+
+                {% for num in page_obj.paginator.page_range %}
+                    <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                    </li>
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}">Siguiente</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% else %}
+        <div class="alert alert-info text-center mt-4">
+            No hay usuarios registrados aún.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

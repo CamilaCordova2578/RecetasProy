@@ -1,0 +1,30 @@
+{% extends 'recetas/base.html' %}
+
+{% block title %}Lista de Usuarios{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-primary">Usuarios Registrados</h2>
+
+    {% if usuarios %}
+        <div class="row">
+            {% for usuario in usuarios %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card shadow-sm border-0 h-100" style="background-color: #fffaf0; border-left: 6px solidrgb(240, 8, 16);">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger">{{ usuario.nombre_usuario }}</h5>
+                            <p class="card-text"><strong>Email:</strong> {{ usuario.email }}</p>
+                            <p class="card-text"><strong>Usuario:</strong> {{ usuario.user.username }}</p>
+                            <p class="text-muted small">ID: {{ usuario.id }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            No hay usuarios registrados aún.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

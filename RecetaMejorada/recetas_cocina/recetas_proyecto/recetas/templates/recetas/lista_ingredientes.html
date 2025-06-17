@@ -1,0 +1,35 @@
+{% extends 'recetas/base.html' %}
+{% block title %}Lista de Ingredientes{% endblock %}
+{% block content %}
+    {%for ingrediente in ingredientes%}
+        <h1>{{ingrediente.nombre}}</h1>
+        <p>{{ingrediente.unidad_medida}}</p>
+    {%endfor%}
+    {% if ingredientes %}
+        <ul>
+            {% for ingrediente in ingredientes %}
+                <li>{{ ingrediente.nombre }} - {{ ingrediente.unidad_medida }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay ingredientes registrados.</p>
+    {% endif %}
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

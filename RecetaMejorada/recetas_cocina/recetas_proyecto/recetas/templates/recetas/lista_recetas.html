@@ -1,0 +1,250 @@
+{% extends 'recetas/base.html' %} {# Asegúrate de que esto sea 'base.html' o 'recetas/base.html' según tu estructura #}
+
+{% block title %}Lista de Recetas{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        /* Paleta de Colores */
+        --primary-color: #ff6f61; /* Rojo Coral vibrante */
+        --secondary-color: #4CAF50; /* Verde Esmeralda */
+        --accent-color: #00bcd4; /* Azul Turquesa */
+        --text-dark: #333;
+        --text-light: #f9f9f9;
+        --background-light: #fcfcfc;
+        --card-bg: #ffffff;
+        --shadow-light: rgba(0,0,0,0.08);
+        --shadow-hover: rgba(0,0,0,0.15);
+        --heart-active: #e91e63; /* Rosa Pasión */
+    }
+
+    body {
+        font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background-color: var(--background-light);
+        color: var(--text-dark);
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 30px auto; /* Más margen superior/inferior */
+        padding: 0 20px; /* Más espaciado lateral */
+    }
+
+    h1 {
+        text-align: center;
+        color: var(--primary-color); /* Título principal con color vibrante */
+        margin-bottom: 40px;
+        font-size: 3.2em; /* Título más grande */
+        font-weight: 800; /* Más negrita */
+        letter-spacing: -1px;
+        position: relative;
+        padding-bottom: 15px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.1); /* Sombra de texto sutil */
+    }
+
+    h1::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        transform: translateX(-50%);
+        width: 100px; /* Línea más larga */
+        height: 5px; /* Línea más gruesa */
+        background-color: var(--secondary-color); /* Color secundario para la línea */
+        border-radius: 3px;
+    }
+
+    /* Estilos para las tarjetas de recetas */
+    .recipe-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px; /* Más espacio entre tarjetas */
+        justify-content: center;
+    }
+
+    .recipe-card {
+        border: none;
+        border-radius: 15px; /* Bordes aún más redondeados */
+        box-shadow: 0 6px 20px var(--shadow-light); /* Sombra más pronunciada */
+        transition: all 0.4s ease; /* Transición más suave para todo */
+        background: var(--card-bg);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative; /* Para posibles efectos internos */
+    }
+
+    .recipe-card:hover {
+        transform: translateY(-8px) rotateZ(0.5deg); /* Efecto de levantamiento y ligera rotación */
+        box-shadow: 0 12px 25px var(--shadow-hover); /* Sombra más intensa al pasar el ratón */
+    }
+
+    .recipe-card img {
+        width: 100%;
+        height: 240px; /* Altura de imagen ligeramente mayor */
+        object-fit: cover;
+        border-radius: 15px 15px 0 0;
+        filter: brightness(0.95); /* Ligeramente más oscura para contraste */
+        transition: filter 0.3s ease;
+    }
+
+    .recipe-card:hover img {
+        filter: brightness(1); /* Vuelve a brillo normal al pasar el ratón */
+    }
+
+    .recipe-card-content {
+        padding: 25px; /* Más padding */
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    .recipe-card h3 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 2em; /* Título de tarjeta más grande */
+        color: var(--primary-color); /* Título de tarjeta con color primario */
+        line-height: 1.2;
+        font-weight: 700;
+    }
+
+    .recipe-card h3 a {
+        text-decoration: none;
+        color: inherit;
+        transition: color 0.3s ease;
+    }
+
+    .recipe-card h3 a:hover {
+        color: var(--accent-color); /* Nuevo color al pasar el ratón sobre el título */
+    }
+
+    .recipe-card p {
+        font-size: 1.05em; /* Texto un poco más grande */
+        color: #555;
+        margin-bottom: 10px;
+    }
+
+    .recipe-card p strong {
+        color: var(--text-dark); /* Negrita más marcada */
+    }
+
+    .recipe-card .description {
+        font-size: 0.98em;
+        color: #666;
+        margin-bottom: 20px; /* Más espacio */
+        flex-grow: 1;
+    }
+
+    /* Estilos para el botón de corazón */
+    .heart-button {
+        background: var(--background-light); /* Fondo suave */
+        border: 2px solid var(--primary-color); /* Borde con color primario */
+        cursor: pointer;
+        font-size: 1.15em; /* Ligeramente más grande */
+        padding: 12px 20px; /* Más padding */
+        border-radius: 30px; /* Más redondeado */
+        transition: all 0.3s ease, border-color 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center; /* Centrar contenido */
+        gap: 10px; /* Más espacio entre icono y texto */
+        font-weight: 600;
+        text-decoration: none;
+        align-self: flex-start;
+        margin-top: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05); /* Sombra suave */
+    }
+
+    .heart-button:hover {
+        transform: translateY(-2px); /* Levantamiento sutil */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        background-color: var(--primary-color); /* Fondo primario al hover */
+        color: var(--text-light) !important; /* Texto claro al hover */
+        border-color: var(--primary-color); /* Borde primario al hover */
+    }
+
+    .heart-button.favorito {
+        color: var(--text-light); /* Texto blanco si es favorito */
+        background-color: var(--heart-active); /* Fondo rosa activo */
+        border-color: var(--heart-active); /* Borde rosa activo */
+    }
+
+    .heart-button.no-favorito {
+        color: var(--primary-color); /* Texto con color primario */
+        background-color: var(--background-light); /* Fondo claro */
+        border-color: var(--primary-color); /* Borde con color primario */
+    }
+
+    .heart-button.no-favorito:hover {
+        background-color: var(--primary-color); /* Fondo primario al hover */
+        color: var(--text-light) !important; /* Texto claro al hover */
+        border-color: var(--primary-color); /* Borde primario al hover */
+    }
+    /* Asegurar que el icono también cambie de color al hover en no-favorito */
+    .heart-button.no-favorito:hover .heart-icon {
+        color: var(--text-light);
+    }
+
+
+    .heart-icon {
+        font-size: 1.3em; /* Icono más grande */
+        transition: all 0.2s ease;
+        line-height: 1; /* Asegura la alineación del icono */
+    }
+
+    /* Mensaje de no recetas */
+    .no-recipes-message {
+        text-align: center;
+        font-size: 1.6em;
+        color: #777;
+        padding: 60px;
+        background-color: var(--card-bg);
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        grid-column: 1 / -1; /* Para que ocupe todo el ancho de la cuadrícula */
+    }
+</style>
+
+<div class="container">
+    <br/>
+    <h1>Descubre Deliciosas Recetas</h1>
+
+    <div class="recipe-grid">
+        {% for receta in recetas %}
+            <div class="recipe-card">
+                {% if receta.imagen %}
+                    <img src="{{ receta.imagen.url }}" alt="{{ receta.nombre }}">
+                {% endif %}
+                <div class="recipe-card-content">
+                    <h3><a href="{% url 'detalle_receta' receta.id %}">{{ receta.nombre }}</a></h3>
+                    <p class="description">{{ receta.descripcion|truncatewords:30 }}</p> {# Aumentamos palabras para descripción #}
+                    <p><strong>Categoría:</strong> <span style="color: var(--accent-color); font-weight: 600;">{{ receta.categoria }}</span></p>
+                    <p><strong>Por:</strong> <span style="color: #888;">{{ receta.creado_por.username }}</span></p>
+
+                    {% if user.is_authenticated %}
+                        <form method="post" action="{% url 'toggle_favorito' receta.id %}" class="favorite-toggle-form" data-receta-id="{{ receta.id }}" style="display:inline-block; margin-top: auto;"> {# display:inline-block y margin-top:auto para mejor alineación #}
+                            {% csrf_token %}
+                            {% if receta.id in recetas_favoritas_ids %}
+                                <button type="submit" class="heart-button favorito">
+                                    <span class="heart-icon">❤️</span>
+                                    <span>Favorito</span>
+                                </button>
+                            {% else %}
+                                <button type="submit" class="heart-button no-favorito">
+                                    <span class="heart-icon">🤍</span>
+                                    <span>Añadir a Favoritos</span>
+                                </button>
+                            {% endif %}
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="no-recipes-message">¡Ups! Parece que no hay recetas deliciosas para mostrar aún. ¡Sé el primero en añadir una!</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
