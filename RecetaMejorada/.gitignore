@@ -23,12 +23,7 @@ __pycache__/
 *.coverage
 
 
-staticfiles/
-static_root/
 
-
-media/
-media_root/
 
 
 .vscode/

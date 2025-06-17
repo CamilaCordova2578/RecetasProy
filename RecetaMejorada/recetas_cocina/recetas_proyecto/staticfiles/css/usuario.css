@@ -1,0 +1,25 @@
+.profile-img-small {
+    width: 100px; /* Un poco más grande para mejor visibilidad */
+    height: 100px; /* Mismo tamaño para hacerla cuadrada */
+    object-fit: cover; /* Recorta la imagen para que quepa sin distorsionarse */
+    border-radius: 50%; /* Hace que la imagen sea perfectamente circular */
+    border: 3px solid #007bff; /* Un borde azul para destacar */
+    /* Aseguramos que la imagen no se salga de su caja */
+    display: block; /* Para centrarla con margin auto si es necesario */
+    margin: 0 auto 15px auto; /* Centra la imagen y da un margen inferior */
+}
+
+/* Opcional: para asegurar que las tarjetas tengan la misma altura si el contenido varía */
+.card.h-100 {
+    display: flex;
+    flex-direction: column;
+}
+.card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Empuja el botón al final si hay espacio */
+}
+.card-text {
+    flex-grow: 1; /* Permite que la descripción ocupe el espacio disponible */
+}
