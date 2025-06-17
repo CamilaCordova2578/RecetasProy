@@ -1,3 +1,3 @@
 # 🍳 SazonDjango 
--Camila Cordova
--Jhoel Mamani 
+-Camila Cordova<br>
+-Jhoel Mamani <br>
