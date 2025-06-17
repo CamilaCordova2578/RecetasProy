@@ -1,2 +1,2 @@
-# 🍳 SazonDjango - Recetario Digital
+# 🍳 SazonDjango 
 -Camila Cordova
